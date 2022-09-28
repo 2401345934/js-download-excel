@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible"
+        content="IE=edge">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+
+  <button id="btn">下载 excel</button>
+  <script>
+    const btn = document.querySelector("#btn")
+    function downLoadExcel (data, tableTitle, fileName) {
+      //定义表头
+      let str = tableTitle += '\n';
+      //增加\t为了不让表格显示科学计数法或者其他格式
+      for (let i = 0; i < data.length; i++) {
+        for (let item in data[i]) {
+          str += `${data[i][item] + '\t'},`;
+        }
+        str += '\n';
+      }
+      //encodeURIComponent解决中文乱码
+      let uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(str);
+      //通过创建a标签实现
+      let link = document.createElement("a");
+      link.href = uri;
+      //对下载的文件命名
+      link.download = `${fileName || '表格数据'}.xls`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    function generateExcelArray (initI = 10) {
+      const resultTableData = []
+      const item = {
+        "date": "2021-5-27 19:34",
+        "stop_name": "L1电源列头柜",
+        "check_name": "新检测点",
+        "device_name": "电源列头柜12路",
+        "device_type": "指示灯",
+        "status": "已完成",
+        "result": "2.000无异常"
+      }
+      for (let i = 0; i < initI; i++) {
+        resultTableData.push(item)
+      }
+
+      return resultTableData
+    }
+    btn.addEventListener("click", () => {
+      console.time('xiazai')
+      downLoadExcel(generateExcelArray(1000000), '任务时间,停靠点名称,检测点名称,设备名称,设备类型,任务执行状态,结果', 'test')
+      console.timeEnd('xiazai')
+    })
+  </script>
+</body>
+
+</html>
